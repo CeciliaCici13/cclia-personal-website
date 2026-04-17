@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cecilia Zeng</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=DM+Serif+Display:ital@0;1&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f5f0e6;
+    --ink: #1a1714;
+    --red: #ff3b2f;
+    --yellow: #ffd60a;
+    --blue: #2264ff;
+    --pink: #ff6ec7;
+    --green: #0fbf6b;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    background: var(--paper);
+    color: var(--ink);
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Paper grain texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 50%, rgba(0,0,0,0.02) 1px, transparent 1px),
+      radial-gradient(circle at 80% 30%, rgba(0,0,0,0.02) 1px, transparent 1px),
+      radial-gradient(circle at 40% 80%, rgba(0,0,0,0.02) 1px, transparent 1px);
+    background-size: 8px 8px, 12px 12px, 10px 10px;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.6;
+  }
+
+  /* Noise overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 2;
+    opacity: 0.08;
+    mix-blend-mode: multiply;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 32px;
+    position: relative;
+    z-index: 3;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--paper);
+    border-bottom: 3px solid var(--ink);
+    padding: 16px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  nav .logo {
+    font-family: 'Bungee', cursive;
+    font-size: 20px;
+    letter-spacing: -0.02em;
+  }
+
+  nav ul {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  nav a {
+    color: var(--ink);
+    text-decoration: none;
+    position: relative;
+    padding: 4px 0;
+    transition: color 0.2s;
+  }
+
+  nav a:hover { color: var(--red); }
+
+  nav a::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: -2px;
+    height: 2px;
+    background: var(--red);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s;
+  }
+
+  nav a:hover::after { transform: scaleX(1); }
+
+  /* HERO */
+  .hero {
+    min-height: calc(100vh - 64px);
+    padding: 56px 0 80px;
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 3;
+  }
+
+  .hero-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 6px 14px;
+    display: inline-block;
+    margin-bottom: 24px;
+    transform: rotate(-2deg);
+  }
+
+  .hero h1 {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-weight: 400;
+    font-size: clamp(60px, 10.5vw, 160px);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin-bottom: 28px;
+  }
+
+  .hero h1 .accent-red { color: var(--red); font-style: italic; }
+  .hero h1 .accent-blue { color: var(--blue); }
+  .hero h1 .underline {
+    position: relative;
+    display: inline-block;
+  }
+  .hero h1 .underline::after {
+    content: '';
+    position: absolute;
+    left: -4px; right: -4px;
+    bottom: 8px;
+    height: 14px;
+    background: var(--yellow);
+    z-index: -1;
+  }
+
+  .hero-sub {
+    font-size: 20px;
+    max-width: 620px;
+    line-height: 1.4;
+    margin-bottom: 32px;
+    font-weight: 400;
+  }
+
+  .hero-sub em {
+    background: var(--pink);
+    padding: 0 6px;
+    font-style: normal;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 14px 28px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    border: 2.5px solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+    transition: all 0.2s;
+    box-shadow: 4px 4px 0 var(--ink);
+    cursor: pointer;
+  }
+
+  .btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--ink);
+  }
+
+  .btn.primary {
+    background: var(--red);
+    color: var(--paper);
+  }
+
+  .btn.yellow {
+    background: var(--yellow);
+  }
+
+  /* Decorative floating stickers */
+  .sticker {
+    position: absolute;
+    font-family: 'Bungee', cursive;
+    font-size: 14px;
+    padding: 10px 16px;
+    border: 2.5px solid var(--ink);
+    border-radius: 40px;
+    z-index: 2;
+    box-shadow: 3px 3px 0 var(--ink);
+  }
+
+  .sticker-1 {
+    top: 12%; right: 8%;
+    background: var(--yellow);
+    transform: rotate(8deg);
+  }
+  .sticker-2 {
+    top: 50%; right: 4%;
+    background: var(--pink);
+    transform: rotate(-12deg);
+  }
+  .sticker-3 {
+    bottom: 15%; right: 20%;
+    background: var(--green);
+    color: var(--paper);
+    transform: rotate(5deg);
+  }
+
+  /* TICKER */
+  .ticker {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 20px 0;
+    overflow: hidden;
+    border-top: 3px solid var(--ink);
+    border-bottom: 3px solid var(--ink);
+    position: relative;
+    z-index: 3;
+  }
+
+  .ticker-track {
+    display: flex;
+    gap: 48px;
+    animation: scroll 30s linear infinite;
+    white-space: nowrap;
+    font-family: 'Bungee', cursive;
+    font-size: 24px;
+    letter-spacing: 0.02em;
+  }
+
+  .ticker-track span {
+    display: inline-flex;
+    align-items: center;
+    gap: 48px;
+  }
+
+  .ticker-track .dot {
+    color: var(--red);
+  }
+
+  @keyframes scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* SECTIONS */
+  section { padding: 100px 0; position: relative; z-index: 3; }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 24px;
+    margin-bottom: 60px;
+    flex-wrap: wrap;
+  }
+
+  .section-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 4px 10px;
+  }
+
+  .section-title {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-weight: 400;
+    font-size: clamp(40px, 6vw, 72px);
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+
+  .section-title em {
+    color: var(--red);
+    font-style: italic;
+    font-family: 'DM Serif Display', Georgia, serif;
+  }
+
+  /* ABOUT */
+  .about {
+    border-top: 3px solid var(--ink);
+    border-bottom: 3px solid var(--ink);
+  }
+
+  .about-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin-top: 20px;
+  }
+
+  .stat {
+    border: 2.5px solid var(--ink);
+    padding: 28px 24px;
+    background: var(--paper);
+    position: relative;
+    box-shadow: 6px 6px 0 var(--ink);
+    min-height: 240px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .stat:nth-child(1) { background: var(--yellow); }
+  .stat:nth-child(2) { background: var(--pink); }
+  .stat:nth-child(3) { background: var(--blue); color: var(--paper); }
+  .stat:nth-child(4) { background: var(--green); color: var(--paper); }
+
+  .stat-number {
+    font-family: 'Bungee', cursive;
+    font-size: 56px;
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+
+  .stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 900px) {
+    .about-stats { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* PROJECTS */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+  }
+
+  .project {
+    border: 3px solid var(--ink);
+    padding: 36px;
+    position: relative;
+    background: var(--paper);
+    box-shadow: 8px 8px 0 var(--ink);
+    transition: all 0.2s ease;
+    cursor: pointer;
+    overflow: hidden;
+    color: var(--ink);
+    text-decoration: none;
+    display: block;
+  }
+
+  .project:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 12px 12px 0 var(--ink);
+  }
+
+  /* Color variants applied by explicit class */
+  .project.color-instagram {
+    background: linear-gradient(135deg, #833ab4 0%, #c13584 40%, #e1306c 70%, #fd1d1d 100%);
+    color: var(--paper);
+  }
+  .project.color-gray {
+    background: #d4d0c8;
+    color: var(--ink);
+  }
+  .project.color-yellow { background: var(--yellow); color: var(--ink); }
+  .project.color-pink { background: var(--pink); color: var(--ink); }
+  .project.color-blue { background: var(--blue); color: var(--paper); }
+  .project.color-green { background: var(--green); color: var(--paper); }
+  .project.color-red { background: var(--red); color: var(--paper); }
+  .project.color-paper { background: var(--paper); color: var(--ink); }
+  .project.color-white { background: #ffffff; color: var(--ink); }
+
+  .project-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    display: inline-block;
+    padding: 4px 10px;
+    border: 2px solid currentColor;
+    margin-bottom: 20px;
+  }
+
+  .project h3 {
+    font-family: 'Bungee', cursive;
+    font-size: clamp(32px, 4vw, 52px);
+    line-height: 0.95;
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+  }
+
+  .project p {
+    font-size: 18px;
+    line-height: 1.5;
+    margin-bottom: 24px;
+    max-width: 560px;
+  }
+
+  .project-meta {
+    display: flex;
+    gap: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    flex-wrap: wrap;
+  }
+
+  .project-meta span {
+    opacity: 0.7;
+  }
+
+  .project-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 12px;
+    opacity: 0.85;
+  }
+
+  .project-arrow {
+    position: absolute;
+    top: 36px;
+    right: 36px;
+    font-size: 32px;
+    font-family: 'Bungee', cursive;
+    transition: transform 0.3s;
+  }
+
+  .project:hover .project-arrow {
+    transform: translate(8px, -8px);
+  }
+
+  /* NOW */
+  .now {
+    background: var(--ink);
+    color: var(--paper);
+    border-top: 3px solid var(--ink);
+    border-bottom: 3px solid var(--ink);
+  }
+
+  .now .section-title { color: var(--paper); }
+  .now .section-title em { color: var(--yellow); }
+  .now .section-number { background: var(--paper); color: var(--ink); }
+
+  .now-list {
+    list-style: none;
+    font-size: clamp(22px, 3vw, 32px);
+    line-height: 1.5;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 400;
+  }
+
+  .now-list li {
+    padding: 20px 0;
+    border-bottom: 1px solid rgba(245, 240, 230, 0.2);
+    display: flex;
+    gap: 20px;
+    align-items: baseline;
+  }
+
+  .now-list li:last-child { border-bottom: none; }
+
+  .now-list .bullet {
+    font-family: 'Bungee', cursive;
+    color: var(--yellow);
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .now-list em {
+    color: var(--pink);
+    font-style: italic;
+  }
+
+  /* FOOTER */
+  footer {
+    padding: 80px 0 40px;
+    position: relative;
+    z-index: 3;
+  }
+
+  .footer-big {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-weight: 400;
+    font-style: italic;
+    font-size: clamp(48px, 10vw, 140px);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin-bottom: 60px;
+  }
+
+  .footer-big .accent { color: var(--red); }
+
+  .footer-links {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+    padding-top: 40px;
+    border-top: 3px solid var(--ink);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .footer-links a {
+    color: var(--ink);
+    text-decoration: none;
+    position: relative;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--red); }
+
+  .footer-links a::before {
+    content: '→ ';
+    color: var(--red);
+  }
+
+  .footer-meta {
+    margin-top: 40px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.5;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    nav ul { display: none; }
+    .container { padding: 0 20px; }
+    .projects-grid { grid-template-columns: 1fr; }
+    .sticker { display: none; }
+    .hero { padding: 60px 0 80px; min-height: auto; }
+    section { padding: 60px 0; }
+  }
+
+  /* FADE IN ANIMATION */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-label { animation: fadeUp 0.6s ease-out; }
+  .hero h1 { animation: fadeUp 0.7s ease-out 0.1s both; }
+  .hero-sub { animation: fadeUp 0.7s ease-out 0.25s both; }
+  .hero-cta { animation: fadeUp 0.7s ease-out 0.4s both; }
+  .sticker-2 { animation: fadeUp 0.6s ease-out 0.7s both; }
+  .sticker-3 { animation: fadeUp 0.6s ease-out 0.8s both; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Cecilia Zeng</div>
+  <ul>
+    <li><a href="#about">About</a></li>
+    <li><a href="#work">Work</a></li>
+    <li><a href="#contact">Say Hi</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-label">Los Angeles / Hong Kong / Shenzhen / Internet</div>
+      <h1>
+        I turn <span class="accent-red">fun</span><br>
+        into <span class="underline">products.</span><br>
+        Then I ship<br>
+        the <span class="accent-blue">fun.</span>
+      </h1>
+      <p class="hero-sub">
+        Hi, I'm Cecilia. Startup co-founder/GTM strategist by day, <em>comedy content creator</em> by night, cross-border e-commerce operator on the weekends. I'm into startups, content creation, and making fun of both.
+      </p>
+      <div class="hero-cta">
+        <a href="#work" class="btn primary">See the work →</a>
+        <a href="#contact" class="btn yellow">Get in touch</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span>BUILDING THINGS <span class="dot">●</span> BREAKING THINGS <span class="dot">●</span> SHIPPING THINGS <span class="dot">●</span> MAKING JOKES ABOUT IT <span class="dot">●</span> VOICE AI × E-COMMERCE × DESIGN × COMEDY <span class="dot">●</span> </span>
+    <span>BUILDING THINGS <span class="dot">●</span> BREAKING THINGS <span class="dot">●</span> SHIPPING THINGS <span class="dot">●</span> MAKING JOKES ABOUT IT <span class="dot">●</span> VOICE AI × E-COMMERCE × DESIGN × COMEDY <span class="dot">●</span> </span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-number">01 / ABOUT</span>
+      <h2 class="section-title">Some <em>fun facts</em></h2>
+    </div>
+    <div class="about-stats">
+      <div class="stat">
+        <div class="stat-number">4.2M</div>
+        <div class="stat-label">Instagram views<br>last month. First<br>time hitting it.<br>One video: 3M.<br>+4,000 followers.</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">⚰</div>
+        <div class="stat-label">I visit the<br>cemetery<br>for inspiration</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">6</div>
+        <div class="stat-label">Debate tournaments<br>hosted in high school.<br>Now a coach. Run<br>workshops every<br>summer.</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">∞</div>
+        <div class="stat-label">A GTM person<br>building Solvo<br>(agent as autonomous<br>founder) & scaling<br>LMNOOP 24× units</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="work">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-number">02 / WORK</span>
+      <h2 class="section-title">Things I'm <em>building</em></h2>
+    </div>
+    <div class="projects-grid">
+
+      <a href="https://www.instagram.com/cc_liia/" target="_blank" rel="noopener" class="project color-instagram">
+        <span class="project-arrow">↗</span>
+        <div class="project-tag">Creator · Instagram</div>
+        <div class="project-date">Mar 2026 — present</div>
+        <h3>Comedy<br>Content</h3>
+        <p>Relatable videos about tech startups, hackathons, and coding culture. 4.2M views last month. 4,000 new followers. 2 of 10 videos crossed 1M views each.</p>
+        <div class="project-meta">
+          <span>→ @cc_liia</span>
+          <span>→ relatable</span>
+        </div>
+      </a>
+
+      <a href="https://www.xiaohongshu.com/user/profile/5f2e26e2000000000101c504?xsec_token=&xsec_source=pc_comment" target="_blank" rel="noopener" class="project color-red">
+        <span class="project-arrow">↗</span>
+        <div class="project-tag">Blog · xiaohongshu</div>
+        <div class="project-date">Mar 2026 — present</div>
+        <h3>Growth<br>Journal</h3>
+        <p>Writing about building and running a startup at 19, sharing takeaways from coffee chats, and connecting with like-minded people. In public. In Chinese-adjacent.</p>
+        <div class="project-meta">
+          <span>→ 小红书</span>
+          <span>→ long-form</span>
+        </div>
+      </a>
+
+      <a href="https://wekruit.com/" target="_blank" rel="noopener" class="project color-white">
+        <span class="project-arrow">↗</span>
+        <div class="project-tag">GTM · voice ai</div>
+        <div class="project-date">Feb 2026 — present</div>
+        <h3>WeKruit</h3>
+        <p>Voice AI infrastructure that runs structured interviews at scale. Leading GTM from customer discovery to positioning and investor story.</p>
+        <div class="project-meta">
+          <span>→ infra</span>
+          <span>→ B2B</span>
+          <span>→ LA</span>
+        </div>
+      </a>
+
+      <div class="project color-green">
+        <span class="project-arrow">↗</span>
+        <div class="project-tag">Co-founder · AI agents</div>
+        <div class="project-date">Mar 2026 — present</div>
+        <h3>Solvo</h3>
+        <p>Agent as autonomous founder. AI agents that discover market needs, build products, and sell at scale. I'm building the <em>distribution layer</em>, automating the creation of social accounts that autonomously produce and post content. My partner is on the <em>build layer</em>.</p>
+        <div class="project-meta">
+          <span>→ in stealth</span>
+          <span>→ agents</span>
+        </div>
+      </div>
+
+      <a href="https://www.amazon.ca/stores/page/3C7947C4-DD53-42D7-AF9A-C50A1CA826F3/?_encoding=UTF8&store_ref=SB_A04713473VXBBGQWJHIAQ-A09506352JN1KW8OGCPHV&pd_rd_plhdr=t&aaxitk=30d3f6ef30837c0cda14465f85fd8127&hsa_cr_id=0&lp_asins=B0F4CXD5BD%2CB0CHV7M97W%2CB0F4D49YY3&lp_query=lmnoop&lp_slot=auto-sparkle-hsa-tetris&ref_=sbx_s_sparkle_sbtcd_logo&pd_rd_w=EqL6l&content-id=amzn1.sym.4d83b9b7-b781-428b-aa24-c9ca5f477ffc%3Aamzn1.sym.4d83b9b7-b781-428b-aa24-c9ca5f477ffc&pf_rd_p=4d83b9b7-b781-428b-aa24-c9ca5f477ffc&pf_rd_r=KNKBG0HF072HMK8RBAZD&pd_rd_wg=rga2f&pd_rd_r=02ddf53f-9120-4c6f-9961-401e17197e20" target="_blank" rel="noopener" class="project color-pink">
+        <span class="project-arrow">↗</span>
+        <div class="project-tag">Co-founder · e-commerce</div>
+        <div class="project-date">2024 — present</div>
+        <h3>LMNOOP</h3>
+        <p>Traditional Chinese herbal ointments on Amazon Canada (US launch as TigerHerbs next). Built the storefront from scratch. 24× monthly unit growth. CAD 169K in year one.</p>
+        <div class="project-meta">
+          <span>→ DTC</span>
+          <span>→ cross-border</span>
+        </div>
+      </a>
+
+      <a href="https://drive.google.com/file/d/158FZSvIFI6sZUsqMeaMoCOGaOTD0WKSz/view?usp=sharing" target="_blank" rel="noopener" class="project color-blue">
+        <span class="project-arrow">↗</span>
+        <div class="project-tag">Founder · debate education</div>
+        <div class="project-date">2022 — 2026</div>
+        <h3>ROD</h3>
+        <p>Regional Organization of Debate. Started it in high school as a rebellion against trophy-chasing debate culture. <em>6 tournaments, 300+ participants.</em> Ran grand summer camps at the Chinese University of Hong Kong (CUHK). Still coaching this summer.</p>
+        <div class="project-meta">
+          <span>→ education</span>
+          <span>→ tournaments</span>
+        </div>
+      </a>
+
+      <a href="https://drive.google.com/file/d/1lEb0D-tHURI99eMCmdhYOZtHkcLtqBpj/view?usp=sharing" target="_blank" rel="noopener" class="project color-yellow">
+        <span class="project-arrow">↗</span>
+        <div class="project-tag">Design · ux/ui</div>
+        <h3>Dener</h3>
+        <p>A debate partner matching system. Tinder-style compatibility matching for high school debaters, built on format, experience, speaker position, achievements, and communication style. In-app chat, video calls, mock debate scheduling, and identity verification for trust and safety.</p>
+        <div class="project-meta">
+          <span>→ ux/ui</span>
+          <span>→ matching</span>
+        </div>
+      </a>
+
+      <a href="https://drive.google.com/file/d/1yHsPGZDpRGirve0prGDEOyWIjwOvyNfI/view?usp=sharing" target="_blank" rel="noopener" class="project color-paper">
+        <span class="project-arrow">↗</span>
+        <div class="project-tag">Co-founder · consumer product</div>
+        <div class="project-date">2025</div>
+        <h3>1+1=3</h3>
+        <p>A modular phone accessories ecosystem. Base case, clip-in frames, collectible charms, and a magnetic cardholder, so self-expression stays dynamic. Led GTM, content strategy, platform operations, and influencer outreach, as well as in-house content creation across a 4-month sprint.</p>
+        <div class="project-meta">
+          <span>→ DTC</span>
+          <span>→ GTM</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<footer id="contact">
+  <div class="container">
+    <h2 class="footer-big">
+      Say <span class="accent">hi.</span><br>
+      Or send a<br>
+      <em>weird idea.</em>
+    </h2>
+
+    <div class="footer-links">
+      <a href="mailto:ceciliazeng13@gmail.com">Email</a>
+      <a href="https://www.instagram.com/cc_liia/" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.linkedin.com/in/cecilia-zeng13/" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://www.xiaohongshu.com/user/profile/5f2e26e2000000000101c504?xsec_token=&xsec_source=pc_comment" target="_blank" rel="noopener">Xiaohongshu</a>
+    </div>
+
+    <div class="footer-meta">
+      <span>© Cecilia · {CURRENT_YEAR} · made with too much coffee</span>
+      <span>last updated: today</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Set current year
+  document.querySelector('.footer-meta span').innerHTML = document.querySelector('.footer-meta span').innerHTML.replace('{CURRENT_YEAR}', new Date().getFullYear());
+
+  // Subtle cursor-following sticker tilt
+  document.querySelectorAll('.sticker').forEach(sticker => {
+    const baseRotation = parseFloat(sticker.style.transform?.match(/rotate\(([^)]+)deg\)/)?.[1] || getComputedStyle(sticker).transform);
+  });
+
+  // Intersection observer for section fade-ins
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.animation = 'fadeUp 0.8s ease-out forwards';
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.project, .stat, .now-list li').forEach(el => {
+    el.style.opacity = '0';
+    observer.observe(el);
+  });
+</script>
+
+</body>
+</html>
